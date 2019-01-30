@@ -1,0 +1,15 @@
+<h2>Blog Posts</h2>
+<br>
+<% @posts.each do |post| %>
+    <div class="card bg-light">
+        <div class="card-body">
+            <h4 class="card-title"><%= post.title %></h4>
+            <p card="card-text" style="font-weight: bold">By <%= User.find(post.user_id).name %></p>
+            <p class="card-text"><%= simple_format(post.body) %></p>
+            <%= link_to "Read More", post_path(post), :class=> "btn btn-outline-dark" %>
+        </div>
+    </div>
+    <br>
+<% end %>
+
+

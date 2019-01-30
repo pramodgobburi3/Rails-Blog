@@ -1,0 +1,96 @@
+<script>
+    function autoheight() {
+        if (!$("#ta").prop('scrollTop')) {
+            do {
+                var b = $("#ta").prop('scrollHeight');
+                var h = $("#ta").height();
+                $("#ta").height(h - 5);
+            }
+            while (b && (b != $("#ta").prop('scrollHeight')));
+        };
+        $("#ta").height($("#ta").prop('scrollHeight') + 10);
+    }
+</script>
+
+<script>
+    #inner_remaining {
+        background-color: #DDDDDD;    
+    
+        position: absolute;
+        top: 100px;
+        bottom: 0;
+        width: 100%; 
+    }
+</script>
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+<% if notice %>
+    <div class="alert alert-info"><%= notice %></div>
+<% end %>
+<h2><%= @post.title %></h2>
+<p><%= simple_format(@post.body) %></p>
+<h6 style="font-weight:bold">-<%= User.find(@post.user_id).name %></h6>
+<hr>
+<div>
+    <% if @post.user_id == @current_user.id %>
+        <%= link_to "Edit", edit_post_path(@post), :class => "btn btn-outline-primary", :style => "margin-right:5px" %>
+        <button type="button" style="float: right" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModal">
+            Delete
+        </button>
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <%= link_to"Confirm", post_path(@post), method: :delete, :class => "btn btn-danger" %>
+                </div>
+                </div>
+            </div>
+        </div>
+    <% else %>
+        <%= link_to "Report", report_path([@post]), :class => "btn btn-outline-dark"%>
+    <% end %>
+</div>
+<br>
+<h5>Comments</h5>
+<div>
+    <%= form_for([@post, @post.post_comments.build]) do |f| %>
+        <p>
+            <%= f.text_area(:body, :class => "form-control", id: "ta", onkeyup: 'autoheight()', placeholder: 'Add comment...' ) %>
+        </p>
+        <p>
+            <%= f.submit("Post", :class => "btn btn-primary", style: "float:right") %>
+        </p>
+    <% end %>
+    <br>
+    <br>
+    <div id="inner_remaining">
+        <div class="card" style="height: 100%; overflow: auto;">
+            <% @post.post_comments.each.with_index do |comment, i| %>
+                <% if comment.id != nil %>
+                    <div class="card-body" style="font-size: 20px; padding: 8px; padding-left: 10px; padding-right: 10px">
+                        <%= comment.body %><br>
+                        <b style="font-size: 15px">-<%= User.find(comment.user_id).name %></b>
+                        <% if comment.user_id == @current_user.id %>
+                            <%= link_to "X", [comment.post, comment], method: :delete, :class => "btn btn-danger", style: "float: right; font-size: 15px"%>
+                        <% end %>
+                    </div>
+
+                    <% if i != @post.post_comments.length-1 %>
+                        <hr style="margin: 5px">
+                    <% end %>
+                <% end %>
+            <% end %>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+<h2>Edit Post</h1>
+<script>
+     function autoheight() {
+        if (!$("#ta").prop('scrollTop')) {
+            do {
+                var b = $("#ta").prop('scrollHeight');
+                var h = $("#ta").height();
+                $("#ta").height(h - 5);
+            }
+            while (b && (b != $("#ta").prop('scrollHeight')));
+        };
+        $("#ta").height($("#ta").prop('scrollHeight') + 10);
+    }
+</script>
+
+
+<%= form_for :post, url: post_path(@post), method: :patch do |f| %>
+    <% if @post.errors.any? %>
+        <% @post.errors.full_messages.each do |msg| %>
+            <div class="alert alert-danger"><%= msg %></div>
+        <% end %>
+    <% end %>
+    <p>
+        <%= f.label :title %><br>
+        <%= f.text_field(:title, :class => "form-control") %>
+    </p>
+
+    <p>
+        <%= f.label :body %><br>
+        <%= f.text_area(:body, :class => "form-control", id: "ta", onkeyup: "autoheight()") %>
+    </p>
+
+    <p>
+        <%= f.submit(:class => "btn btn-success") %>
+    </p>
+<% end %>
+
+<script>
+    autoheight($("#ta"));
+</script>
